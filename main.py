@@ -83,6 +83,14 @@ def _reject_forbidden(text):
             raise ValueError("entry must stay one clean line")
 
 
+def _reject_unterminated(text):
+    # A week summary that lost its tail in an edit would still pass
+    # every length and character check above, so require terminal
+    # punctuation: it proves the line ends where its sentence ends.
+    if text[-1] not in ".!?":
+        raise ValueError("entry must end with terminal punctuation")
+
+
 def _validate(text):
     """Refuse anything that is not one clean line inside the limit."""
     if not isinstance(text, str):
@@ -94,6 +102,7 @@ def _validate(text):
         raise ValueError("entry runs past its character limit")
     _reject_padding(text)
     _reject_forbidden(text)
+    _reject_unterminated(text)
     return text
 
 
